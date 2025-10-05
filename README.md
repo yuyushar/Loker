@@ -1,6 +1,6 @@
 # SI Lowker (Sistem Informasi Lowongan Kerja)
 
-## (NAMA APLIKASINYA AOA?)
+## GET WORK
 **SI Lowker** adalah aplikasi berbasis Python yang digunakan untuk mempermudah proses pengelolaan lowongan pekerjaan dan magang. Aplikasi ini menyediakan fitur untuk admin dalam mengelola lowongan serta fitur bagi pelamar untuk mendaftar, melamar, dan melihat riwayat lamaran secara interaktif.
 
 ---
