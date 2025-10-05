@@ -20,9 +20,9 @@ def tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email,
               alamat, email, pengalaman, pendidikan_terakhir))
 
         conn.commit()
-        print("✅ Biodata pelamar berhasil disimpan!")
+        print("Biodata pelamar berhasil disimpan!")
     except Exception as e:
-        print("❌ Gagal menambahkan pelamar:", e)
+        print("Gagal menambahkan pelamar:", e)
     finally:
         conn.close()
 
@@ -72,9 +72,9 @@ def edit_biodata(pelamar_id, **kwargs):
     try:
         cursor.execute(query, tuple(values))
         conn.commit()
-        print("✅ Biodata pelamar berhasil diperbarui!")
+        print("Biodata pelamar berhasil diperbarui!")
     except Exception as e:
-        print("❌ Gagal mengedit biodata:", e)
+        print("Gagal mengedit biodata:", e)
     finally:
         conn.close()
 
@@ -87,7 +87,7 @@ def hapus_pelamar(pelamar_id):
     cursor.execute("DELETE FROM Pelamar WHERE pelamar_id = ?", (pelamar_id,))
     conn.commit()
     conn.close()
-    print(f"🗑️ Pelamar ID {pelamar_id} berhasil dihapus.")
+    print(f"Pelamar ID {pelamar_id} berhasil dihapus.")
 
 
 # ==========================================================
@@ -110,19 +110,19 @@ def hapus_pelamar(pelamar_id):
 #     # Coba login
 #     hasil = login_pelamar("Budi Santoso", "2001-04-10")
 #     if hasil:
-#         print("✅ Login berhasil:", dict(hasil))
+#         print("Login berhasil:", dict(hasil))
 #     else:
-#         print("❌ Login gagal!")
+#         print("Login gagal!")
 
 #     # Lihat biodata
 #     if hasil:
 #         bio = lihat_biodata(hasil["pelamar_id"])
-#         print("📋 Biodata Pelamar:", dict(bio))
+#         print("Biodata Pelamar:", dict(bio))
 
 #         # Edit biodata
 #         edit_biodata(hasil["pelamar_id"], alamat="Jl. Melati No. 45", pengalaman=2)
 
 #         # Lihat ulang
 #         bio2 = lihat_biodata(hasil["pelamar_id"])
-#         print("📋 Biodata setelah edit:", dict(bio2))
+#         print("Biodata setelah edit:", dict(bio2))
 #         hapus_pelamar(1)
