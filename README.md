@@ -20,20 +20,20 @@ python main.py
 ---
 
 ## STRUKTUR FOLDER APLIKASI
-si_lowker/
-│
-├── main.py
-├── database/
-│   ├── connection.py
-│   ├── admin_db.py
-│   ├── pelamar_db.py
-│   ├── lowongan_db.py
-│   ├── lamaran_db.py
-│   └── si_lowker.db
-├── features/
-│   ├── admin.py
-│   └── pelamar.py
-└── README.md
+si_lowker/  
+│  
+├── main.py  
+├── database/  
+│   ├── connection.py  
+│   ├── admin_db.py  
+│   ├── pelamar_db.py  
+│   ├── lowongan_db.py  
+│   ├── lamaran_db.py  
+│   └── si_lowker.db  
+├── features/  
+│   ├── admin.py  
+│   └── pelamar.py  
+└── README.md  
 
 ---
 
