@@ -1,8 +1,10 @@
 from database.connection import setup_database
 from database import admin_db
-from features import admin as admin_feat, pelamar as pelamar_feat
+from features import admin as admin_feat
+from features import pelamar as pelamar_feat
 
 def ensure_admin_exists():
+    # Membuat admin default jika belum ada (email: admin@admin.com, password: admin)
     a = admin_db.get_admin_by_email("admin@admin.com")
     if not a:
         admin_db.create_admin("admin@admin.com", "admin")
