@@ -1,8 +1,22 @@
+from database.admin_db import login_admin
 from database.lamaran_db import lihat_semua_lamaran, ubah_status_lamaran
 from database.lowongan_db import get_all_lowongan, create_lowongan, update_lowongan, delete_lowongan, get_lowongan_by_id
 import datetime
 
 def menu_admin():
+    print("\n" + "="*40)
+    print("          LOGIN ADMIN")
+    print("="*40)
+
+    email = input("Masukkan email admin: ").strip()
+    password = input("Masukkan password admin: ").strip()
+    admin = login_admin(email, password)
+
+    if not admin:
+        print("Login gagal! Email atau password salah.")
+        return
+    else:
+        print(f"Login berhasil. Selamat datang, {admin['email']}!")
     while True:
         print("\n" + "="*40)
         print("        === MENU ADMIN ===")
