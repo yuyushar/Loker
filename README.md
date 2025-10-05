@@ -82,7 +82,7 @@ Berikut diagram flow yang menunjukan alur program ini berjalan. Dirancang menggu
 
 Hubungan relasi antar tabel dapat dilihat pada diagram berikut:
 
-![ERD SI Lowker](database/ERD_SI Loker.png)
+![ERD SI Lowker](database/ERD_SI-Loker.png)
 
 ---
 
