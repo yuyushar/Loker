@@ -13,7 +13,7 @@ def reset_database():
         os.remove(DB_PATH)
         print("🧹 Database lama dihapus.")
     create_tables()  # panggil ulang fungsi setup tabel
-    print("✅ Database baru telah dibuat ulang.")
+    print("Database baru telah dibuat ulang.")
 
 #INI BIKIN 
 def create_tables():
