@@ -7,16 +7,13 @@ def main_menu():
             print("\n=== SI LOWONGAN - MENU UTAMA ===")
             print("1. Masuk sebagai Admin")
             print("2. Masuk sebagai Pelamar")
-            print("3. Daftar sebagai Pelamar")
-            print("4. Keluar")
+            print("3. Keluar")
             choice = input("Pilih opsi: ").strip()
             if choice == "1":
                 admin_feat.menu_admin()
             elif choice == "2":
                 pelamar_feat.menu_pelamar()
             elif choice == "3":
-                pelamar_feat.daftar_pelamar()
-            elif choice == "4":
                 sure = input("Konfirmasi keluar? (yes/no): ").strip().lower()
                 if sure == "yes":
                     print("Terima kasih. Program selesai.")
