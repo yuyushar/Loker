@@ -59,30 +59,64 @@ def menu_admin():
 
 
 # === CRUD LOWONGAN ===
-
 def tampilkan_lowongan():
-    print("="*40)
-    print("       DAFTAR LOWONGAN")
-    print("="*40)
-    data = get_all_lowongan()
-    if not data:
-        print("Belum ada data lowongan.")
-        return
-    for i, row in enumerate(data, start=1):
-        print(f"\nLowongan {i}:")
-        print(f"ID                 : {row['lowongan_id']}")
-        print(f"Judul              : {row['judul_lowongan']}")
-        print(f"Perusahaan         : {row['nama_perusahaan']}")
-        print(f"Jenis              : {row['jenis']}")
-        print(f"Lokasi             : {row['lokasi']}")
-        print(f"Minimal Pendidikan : {row['min_pendidikan']}")
-        print(f"Jenis Kelamin      : {row['jenis_kelamin']}")
-        print(f"Deadline           : {row['deadline']}")
-        print(f"Tanggal Posting    : {row['tanggal_posting']}")
-        print(f"Slot               : {row.get('slot', 'Tidak ditentukan')}")
-       
-    print(f"Total lowongan: {len(data)}")
-    print("="*40)
+    while True:
+        print("="*40)
+        print("       DAFTAR LOWONGAN")
+        print("="*40)
+
+        data = get_all_lowongan()
+        if not data:
+            print("Belum ada data lowongan.")
+            return
+
+        # Tampilkan daftar singkat
+        for i, row in enumerate(data, start=1):
+            print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
+
+        print("\nKetik nomor untuk lihat detail, atau '0' untuk kembali ke menu admin.")
+        pilih = input("Pilih nomor lowongan: ").strip()
+
+        if not pilih.isdigit():
+            print("Input harus berupa angka.")
+            continue
+
+        pilih = int(pilih)
+        if pilih == 0:
+            print("Kembali ke menu admin.")
+            break
+        if pilih < 1 or pilih > len(data):
+            print("Nomor tidak ditemukan. Coba lagi.")
+            continue
+
+        # Ambil data detail dari database berdasarkan ID
+        selected_id = data[pilih - 1]['lowongan_id']
+        detail = get_lowongan_by_id(selected_id)
+
+        if not detail:
+            print("Data lowongan tidak ditemukan di database.")
+            continue
+
+        print("\n=== DETAIL LOWONGAN ===")
+        print(f"ID                 : {detail['lowongan_id']}")
+        print(f"Judul              : {detail['judul_lowongan']}")
+        print(f"Perusahaan         : {detail['nama_perusahaan']}")
+        print(f"Jenis              : {detail['jenis']}")
+        print(f"Lokasi             : {detail['lokasi']}")
+        print(f"Minimal Pendidikan : {detail['min_pendidikan']}")
+        print(f"Jenis Kelamin      : {detail['jenis_kelamin']}")
+        print(f"Deadline           : {detail['deadline']}")
+        print(f"Tanggal Posting    : {detail['tanggal_posting']}")
+        print(f"Slot               : {detail.get('slot', 'Tidak ditentukan')}")
+        print(f"Deskripsi          : {detail['deskripsi_pekerjaan']}")
+        print("="*40)
+
+        lanjut = input("\nTekan ENTER untuk kembali ke daftar, atau ketik 'keluar' untuk kembali ke menu admin: ").strip()
+        if lanjut == "keluar":
+            print("Kembali ke menu admin.")
+            break
+
+
 def tambah_lowongan():
     print("\n" + "="*40)
     print("        TAMBAH LOWONGAN ")
@@ -175,65 +209,164 @@ def tambah_lowongan():
     except Exception as e:
         print(f"Gagal menambahkan lowongan: {e}")
 
-
 def edit_lowongan():
     while True:
-        print("\n=== UPDATE LOWONGAN ===")
-        print("Ketik 'keluar' untuk kembali ke menu utama.")
+        print("\n" + "="*40)
+        print("          EDIT LOWONGAN")
+        print("="*40)
 
         data = get_all_lowongan()
         if not data:
-            print("Belum ada lowongan untuk diupdate.")
+            print("Belum ada data lowongan.")
             return
-        tampilkan_lowongan()
-        id_input = input("\nMasukkan ID lowongan yang ingin diupdate: ").strip()
-        if id_input.lower() == "keluar":
-            print("Kembali ke menu utama.")
+
+        # Tampilkan daftar singkat lowongan
+        for i, row in enumerate(data, start=1):
+            print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
+
+        print("\nKetik nomor lowongan untuk lihat & edit, atau '0' untuk kembali ke menu admin.")
+        pilih = input("Pilih nomor lowongan: ").strip()
+
+        if not pilih.isdigit():
+            print("Input harus berupa angka.")
+            continue
+
+        pilih = int(pilih)
+        if pilih == 0:
+            print("Kembali ke menu admin.")
             break
-
-        if not id_input.isdigit():
-            print("Input ID tidak valid!")
+        if pilih < 1 or pilih > len(data):
+            print("Nomor tidak ditemukan. Coba lagi.")
             continue
 
-        low = get_lowongan_by_id(int(id_input))
-        if not low:
-            print("ID Lowongan tidak ditemukan!")
+        # Ambil detail lowongan yang dipilih
+        selected_id = data[pilih - 1]['lowongan_id']
+        detail = get_lowongan_by_id(selected_id)
+
+        if not detail:
+            print("Data lowongan tidak ditemukan di database.")
             continue
 
-        print("\n=== Data Lowongan Lama ===")
-        for k, v in low.items():
-            print(f"{k}: {v}")
+        print("\n=== DETAIL LOWONGAN ===")
+        print(f"ID                 : {detail['lowongan_id']}")
+        print(f"Judul              : {detail['judul_lowongan']}")
+        print(f"Perusahaan         : {detail['nama_perusahaan']}")
+        print(f"Jenis              : {detail['jenis']}")
+        print(f"Lokasi             : {detail['lokasi']}")
+        print(f"Minimal Pendidikan : {detail['min_pendidikan']}")
+        print(f"Jenis Kelamin      : {detail['jenis_kelamin']}")
+        print(f"Deadline           : {detail['deadline']}")
+        print(f"Tanggal Posting    : {detail['tanggal_posting']}")
+        print(f"Slot               : {detail.get('slot', 'Tidak ditentukan')}")
+        print(f"Deskripsi          : {detail['deskripsi_pekerjaan']}")
+        print("="*40)
 
-        print("\nMasukkan data baru (kosongkan jika tidak diubah):")
+        # Konfirmasi edit
+        konfirmasi = input("\nApakah ingin mengedit lowongan ini? (ya/tidak): ").strip().lower()
+        if konfirmasi != "ya":
+            print("Kembali ke daftar lowongan.")
+            continue
 
+        print("\nMasukkan data baru (kosongkan jika tidak ingin diubah):")
         fields = {}
-        for field in [
-            'judul_lowongan', 'deskripsi_pekerjaan', 'lokasi',
-            'jenis', 'deadline', 'nama_perusahaan',
-            'min_pendidikan', 'jenis_kelamin', 'slot'
+        for field, label in [
+            ('judul_lowongan', 'Judul'),
+            ('deskripsi_pekerjaan', 'Deskripsi'),
+            ('lokasi', 'Lokasi'),
+            ('jenis', 'Jenis (Magang/Kerja)'),
+            ('deadline', 'Deadline (YYYY-MM-DD)'),
+            ('nama_perusahaan', 'Nama Perusahaan'),
+            ('min_pendidikan', 'Minimal Pendidikan'),
+            ('jenis_kelamin', 'Jenis Kelamin (L/P/Bebas)'),
+            ('slot', 'Jumlah Slot')
         ]:
-            val = input(f"{field} [{low.get(field)}]: ").strip()
+            val = input(f"{label} [{detail.get(field)}]: ").strip()
             if val:
                 fields[field] = val
 
         if fields:
-            update_lowongan(int(id_input), fields)
-            print("Data lowongan berhasil diupdate.")
+            try:
+                update_lowongan(selected_id, fields)
+                print("Data lowongan berhasil diperbarui!")
+            except Exception as e:
+                print(f"Gagal memperbarui data: {e}")
         else:
             print("Tidak ada perubahan dilakukan.")
 
-        lagi = input("\nApakah ingin mengupdate lowongan lain? (ya/tidak): ").strip().lower()
-        if lagi != "ya":
+        lanjut = input("\nApakah ingin mengedit lowongan lain? (ya/tidak): ").strip().lower()
+        if lanjut != "ya":
+            print("Kembali ke menu admin.")
             break
 
 
 def hapus_data_lowongan():
-    id_low = input("Masukkan ID lowongan yang ingin dihapus: ").strip()
-    if not id_low.isdigit():
-        print("ID tidak valid.")
-        return
-    delete_lowongan(int(id_low))
-    print("Lowongan berhasil dihapus!")
+    while True:
+        print("\n" + "="*40)
+        print("          HAPUS LOWONGAN")
+        print("="*40)
+
+        data = get_all_lowongan()
+        if not data:
+            print("Belum ada data lowongan.")
+            return
+
+        # Tampilkan daftar singkat
+        for i, row in enumerate(data, start=1):
+            print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
+
+        print("\nKetik nomor lowongan yang ingin dihapus, atau '0' untuk kembali ke menu admin.")
+        pilih = input("Pilih nomor lowongan: ").strip()
+
+        if not pilih.isdigit():
+            print("Input harus berupa angka.")
+            continue
+
+        pilih = int(pilih)
+        if pilih == 0:
+            print("Kembali ke menu admin.")
+            break
+        if pilih < 1 or pilih > len(data):
+            print("Nomor tidak ditemukan. Coba lagi.")
+            continue
+
+        # Ambil detail berdasarkan nomor
+        selected_id = data[pilih - 1]['lowongan_id']
+        detail = get_lowongan_by_id(selected_id)
+
+        if not detail:
+            print("Data lowongan tidak ditemukan di database.")
+            continue
+
+        print("\n=== DETAIL LOWONGAN YANG AKAN DIHAPUS ===")
+        print(f"ID                 : {detail['lowongan_id']}")
+        print(f"Judul              : {detail['judul_lowongan']}")
+        print(f"Perusahaan         : {detail['nama_perusahaan']}")
+        print(f"Jenis              : {detail['jenis']}")
+        print(f"Lokasi             : {detail['lokasi']}")
+        print(f"Minimal Pendidikan : {detail['min_pendidikan']}")
+        print(f"Jenis Kelamin      : {detail['jenis_kelamin']}")
+        print(f"Deadline           : {detail['deadline']}")
+        print(f"Tanggal Posting    : {detail['tanggal_posting']}")
+        print(f"Slot               : {detail.get('slot', 'Tidak ditentukan')}")
+        print(f"Deskripsi          : {detail['deskripsi_pekerjaan']}")
+        print("="*40)
+
+        # Konfirmasi hapus
+        konfirmasi = input("\nYakin ingin menghapus lowongan ini? (ya/tidak): ").strip().lower()
+        if konfirmasi == "ya":
+            try:
+                delete_lowongan(selected_id)
+                print("Lowongan berhasil dihapus!")
+            except Exception as e:
+                print(f"Gagal menghapus lowongan: {e}")
+        else:
+            print("Dibatalkan, data tidak dihapus.")
+
+        lanjut = input("\nApakah ingin menghapus lowongan lain? (ya/tidak): ").strip().lower()
+        if lanjut != "ya":
+            print("Kembali ke menu admin.")
+            break
+
 
 
 # === LAMARAN ===
