@@ -1,6 +1,7 @@
 from database.pelamar_db import tambah_pelamar, login_pelamar, lihat_biodata, edit_biodata
 from database.lowongan_db import get_all_lowongan, get_lowongan_by_id
 from database.lamaran_db import tambah_lamaran, lihat_semua_lamaran
+from main import main_menu
 import datetime
 
 
@@ -24,15 +25,15 @@ def menu_pelamar():
             except ValueError:
                 print ("Pilihan harus berupa integer! Tolong ulangi lagi")
 
-        if pilihan == "1":
+        if pilihan == 1:
             pelamar = login_menu()
             if pelamar:
                 menu_setelah_login(pelamar)
-        elif pilihan == "2":
+        elif pilihan == 2:
             daftar_pelamar()
-        elif pilihan == "3":
+        elif pilihan == 3:
             print("Keluar dari menu pelamar...")
-            break
+            main_menu()
 
 
 # === LOGIN DAN REGISTRASI ===
@@ -69,29 +70,37 @@ def daftar_pelamar():
 def menu_setelah_login(pelamar):
     while True:
         print("\n" + "="*40)
-        print(f"   MENU PELAMAR ({pelamar['nama_lengkap']})")
+        print(f"   MENU PELAMAR ({pelamar('nama_lengkap')})")
         print("="*40)
         print("1. Lihat Biodata")
         print("2. Edit Biodata")
         print("3. Lihat Lowongan")
         print("4. Lamar Lowongan")
         print("5. Lihat Status Lamaran")
-        print("0. Logout")
+        print("6. Logout")
         print("="*40)
 
-        pilihan = input("Pilih menu (0-5): ").strip()
+        while True:
+            try:
+                pilihan = int(input(f"{'Pilih menu (1-6)':<21}: "))
+                if pilihan not in range (1,7):
+                    print("Pilihan mu tidak valid! Mohon pilih menu 1-5")
+                else:
+                    break
+            except ValueError:
+                print ("Pilihan harus berupa integer! Tolong ulangi lagi")
 
-        if pilihan == "1":
-            lihat_data_pelamar(pelamar["pelamar_id"])
-        elif pilihan == "2":
+        if pilihan == 1:
+            lihat_data_pelamar(pelamar("pelamar_id"))
+        elif pilihan == 2:
             ubah_biodata(pelamar["pelamar_id"])
-        elif pilihan == "3":
+        elif pilihan == 3:
             tampilkan_lowongan()
-        elif pilihan == "4":
+        elif pilihan == 4:
             lamar_lowongan(pelamar["pelamar_id"])
-        elif pilihan == "5":
+        elif pilihan == 5:
             lihat_status_lamaran(pelamar["pelamar_id"])
-        elif pilihan == "0":
+        elif pilihan == 6:
             print("Logout berhasil.\n")
             break
         else:
