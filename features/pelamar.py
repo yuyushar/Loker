@@ -5,6 +5,7 @@ from main import main_menu
 import datetime
 
 
+# === MENU PELAMAR UTAMA ===
 def menu_pelamar():
     while True:
         print("\n" + "="*40)
@@ -17,13 +18,13 @@ def menu_pelamar():
 
         while True:
             try:
-                pilihan = int(input(f"{'Pilih menu (1-4)':<21}: "))
-                if pilihan not in range (1,4):
-                    print("Pilihan mu tidak valid! Mohon pilih menu 1-4")
+                pilihan = int(input(f"{'Pilih menu (1-3)':<21}: "))
+                if pilihan not in range(1, 4):
+                    print("Pilihanmu tidak valid! Mohon pilih menu 1-3")
                 else:
                     break
             except ValueError:
-                print ("Pilihan harus berupa integer! Tolong ulangi lagi")
+                print("Pilihan harus berupa angka! Tolong ulangi lagi.")
 
         if pilihan == 1:
             pelamar = login_menu()
@@ -37,7 +38,6 @@ def menu_pelamar():
 
 
 # === LOGIN DAN REGISTRASI ===
-
 def login_menu():
     print("\n=== LOGIN PELAMAR ===")
     nama = input("Masukkan nama lengkap: ").strip()
@@ -54,23 +54,22 @@ def login_menu():
 
 def daftar_pelamar():
     print("\n=== PENDAFTARAN PELAMAR BARU ===")
-    nama = input("Nama Lengkap: ")
-    tgl = input("Tanggal Lahir (YYYY-MM-DD): ")
-    jk = input("Jenis Kelamin (L/P): ").upper()
-    alamat = input("Alamat: ")
-    email = input("Email: ")
-    pengalaman = input("Pengalaman (tahun): ")
-    pendidikan = input("Pendidikan Terakhir: ")
+    nama = input("Nama Lengkap: ").strip()
+    tgl = input("Tanggal Lahir (YYYY-MM-DD): ").strip()
+    jk = input("Jenis Kelamin (L/P): ").upper().strip()
+    alamat = input("Alamat: ").strip()
+    email = input("Email: ").strip()
+    pengalaman = input("Pengalaman (tahun): ").strip()
+    pendidikan = input("Pendidikan Terakhir: ").strip()
 
     tambah_pelamar(nama, tgl, jk, alamat, email, pengalaman, pendidikan)
 
 
 # === MENU SETELAH LOGIN ===
-
 def menu_setelah_login(pelamar):
     while True:
         print("\n" + "="*40)
-        print(f"   MENU PELAMAR ({pelamar('nama_lengkap')})")
+        print("           MENU PELAMAR")
         print("="*40)
         print("1. Lihat Biodata")
         print("2. Edit Biodata")
@@ -83,15 +82,15 @@ def menu_setelah_login(pelamar):
         while True:
             try:
                 pilihan = int(input(f"{'Pilih menu (1-6)':<21}: "))
-                if pilihan not in range (1,7):
-                    print("Pilihan mu tidak valid! Mohon pilih menu 1-5")
+                if pilihan not in range(1, 7):
+                    print("Pilihanmu tidak valid! Mohon pilih menu 1-6")
                 else:
                     break
             except ValueError:
-                print ("Pilihan harus berupa integer! Tolong ulangi lagi")
+                print("Input harus berupa angka! Ulangi lagi.")
 
         if pilihan == 1:
-            lihat_data_pelamar(pelamar("pelamar_id"))
+            lihat_data_pelamar(pelamar["pelamar_id"])
         elif pilihan == 2:
             ubah_biodata(pelamar["pelamar_id"])
         elif pilihan == 3:
@@ -103,12 +102,9 @@ def menu_setelah_login(pelamar):
         elif pilihan == 6:
             print("Logout berhasil.\n")
             break
-        else:
-            print("Pilihan tidak valid!")
 
 
 # === FITUR BIODATA ===
-
 def lihat_data_pelamar(pelamar_id):
     data = lihat_biodata(pelamar_id)
     if not data:
@@ -117,7 +113,7 @@ def lihat_data_pelamar(pelamar_id):
 
     print("\n=== BIODATA PELAMAR ===")
     for key, value in dict(data).items():
-        print(f"{key.capitalize()} : {value}")
+        print(f"{key.replace('_', ' ').capitalize()} : {value}")
 
 
 def ubah_biodata(pelamar_id):
@@ -139,7 +135,6 @@ def ubah_biodata(pelamar_id):
 
 
 # === FITUR LOWONGAN DAN LAMARAN ===
-
 def tampilkan_lowongan():
     data = get_all_lowongan()
     if not data:
@@ -155,7 +150,7 @@ def lamar_lowongan(pelamar_id):
     tampilkan_lowongan()
     id_low = input("\nMasukkan ID lowongan yang ingin dilamar: ").strip()
     if not id_low.isdigit():
-        print("Input tidak valid.")
+        print("Input tidak valid. Harus berupa angka.")
         return
 
     low = get_lowongan_by_id(int(id_low))
@@ -170,7 +165,11 @@ def lamar_lowongan(pelamar_id):
 
 def lihat_status_lamaran(pelamar_id):
     data = lihat_semua_lamaran()
-    data_pelamar = [d for d in data if d["pelamar_id"] == pelamar_id] if data and "pelamar_id" in data[0] else []
+    if not data:
+        print("Belum ada lamaran yang dikirim.")
+        return
+
+    data_pelamar = [d for d in data if str(d["pelamar_id"]) == str(pelamar_id)]
 
     if not data_pelamar:
         print("Belum ada lamaran yang dikirim.")
@@ -179,3 +178,4 @@ def lihat_status_lamaran(pelamar_id):
     print("\n=== STATUS LAMARAN ===")
     for row in data_pelamar:
         print(f"{row['judul_lowongan']} - {row['status']} (Tanggal: {row['tanggal_lamaran']})")
+
