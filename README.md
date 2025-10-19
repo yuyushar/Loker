@@ -11,7 +11,7 @@
 2. Install modul yang dibutuhkan menggunakan pip (virtual environment disarankan):
 ```bash
 git clone [https://github.com/yuyushar/Loker.git](https://github.com/yuyushar/Loker.git)
-cd nama-repositori-anda
+cd nama-direktori-anda (seharusnya sesuai nama repository kita "Loker")
 ```
 3. Jalankan aplikasi
 ```bash
