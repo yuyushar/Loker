@@ -106,7 +106,7 @@ def create_tables():
             min_pendidikan IN ('Tidak Ada','SD','SMP','SMA/SMK','D1','D2','D3','D4/S1','S2','S3')
         ) NOT NULL,
         jenis_kelamin TEXT CHECK (jenis_kelamin IN ('L','P','Bebas')) DEFAULT 'Bebas',
-        umur INTEGER,
+        batas_umur INTEGER,
         admin_id INTEGER NOT NULL,
         FOREIGN KEY (admin_id) REFERENCES Admin(admin_id)
             ON DELETE CASCADE ON UPDATE CASCADE
@@ -118,7 +118,7 @@ def create_tables():
         pelamar_id INTEGER NOT NULL,
         tanggal_lamaran TEXT DEFAULT (datetime('now')),
         status TEXT CHECK (
-            status IN ('Dikirim','Diverifikasi','Diterima','Ditolak','AutoReject')
+            status IN ('Dikirim','Diterima','Ditolak','AutoReject')
         ) DEFAULT 'Dikirim',
         FOREIGN KEY (lowongan_id) REFERENCES Lowongan(lowongan_id)
             ON DELETE CASCADE ON UPDATE CASCADE,
