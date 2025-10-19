@@ -402,7 +402,7 @@ def review_lamaran():
         print(f"Lowongan     : {lamaran_terpilih['judul_lowongan']}")
         print(f"Status Saat Ini : {lamaran_terpilih['status']}")
 
-        status = input("Masukkan hasil validasi (Diterima/Ditolak/Diverifikasi): ").capitalize()
+        status = input("Masukkan hasil validasi (Diterima/Ditolak): ").capitalize()
         if ubah_status_lamaran(int(id_lam), status):
             print("Status lamaran berhasil divalidasi.")
         else:
