@@ -84,7 +84,7 @@ def create_tables():
         jenis_kelamin TEXT CHECK (jenis_kelamin IN ('L','P')) NOT NULL,
         alamat TEXT,
         email TEXT UNIQUE NOT NULL,
-        pengalaman INTEGER DEFAULT 0,
+        pengalaman TEXT,
         pendidikan_terakhir TEXT CHECK (
             pendidikan_terakhir IN ('Tidak Ada','SD','SMP','SMA/SMK','D1','D2','D3','D4/S1','S2','S3')
         ) NOT NULL
@@ -106,7 +106,9 @@ def create_tables():
             min_pendidikan IN ('Tidak Ada','SD','SMP','SMA/SMK','D1','D2','D3','D4/S1','S2','S3')
         ) NOT NULL,
         jenis_kelamin TEXT CHECK (jenis_kelamin IN ('L','P','Bebas')) DEFAULT 'Bebas',
-        batas_umur INTEGER,
+        pengalaman TEXT,
+        minimal_umur INTEGER,
+        maksimal_umur INTEGER,
         admin_id INTEGER NOT NULL,
         FOREIGN KEY (admin_id) REFERENCES Admin(admin_id)
             ON DELETE CASCADE ON UPDATE CASCADE
