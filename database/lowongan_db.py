@@ -8,7 +8,7 @@ def create_lowongan(data: Dict) -> int:
     INSERT INTO lowongan (
         judul_lowongan, deskripsi_pekerjaan, lokasi, jenis, tanggal_posting, deadline,
         nama_perusahaan, syarat_tambahan, kontak, slot, min_pendidikan, jenis_kelamin,
-        min_umur, max_umur, pengalaman, admin_id
+        minimal_umur, maximal_umur, pengalaman, admin_id
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     params = (
@@ -16,7 +16,7 @@ def create_lowongan(data: Dict) -> int:
         data['jenis'], data['tanggal_posting'], data['deadline'],
         data['nama_perusahaan'], data.get('syarat_tambahan'), data.get('kontak'),
         data.get('slot', 1), data['min_pendidikan'], data.get('jenis_kelamin', 'Bebas'),
-        data.get('min_umur'), data.get('max_umur'), data.get('pengalaman'), data.get('admin_id')
+        data.get('minimal_umur'), data.get('maximal_umur'), data.get('pengalaman'), data.get('admin_id')
     )
     return execute_query(query, params, return_id=True)
 
