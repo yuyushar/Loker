@@ -15,18 +15,23 @@ def tambah_lamaran(id_pelamar: int, id_lowongan: int, tanggal_lamaran: str) -> i
     return lamaran_id
 
 def lihat_semua_lamaran() -> List[Dict]:
-    """Menampilkan semua data lamaran (termasuk pelamar_id dan lowongan_id)."""
     conn = get_connection()
     conn.row_factory = lambda cursor, row: {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
     cur = conn.cursor()
     cur.execute("""
         SELECT 
-            l.lamaran_id, 
-            l.pelamar_id, 
-            l.lowongan_id, 
-            p.nama_lengkap, 
+            l.lamaran_id,
+            l.pelamar_id,
+            l.lowongan_id,
+            p.nama_lengkap,
+            p.tanggal_lahir,
+            p.jenis_kelamin,
+            p.alamat,
+            p.email,
+            p.pengalaman,
+            p.pendidikan_terakhir,
             lo.judul_lowongan,
-            l.tanggal_lamaran, 
+            l.tanggal_lamaran,
             l.status
         FROM lamaran l
         JOIN pelamar p ON l.pelamar_id = p.pelamar_id

@@ -27,15 +27,15 @@ def tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email,
         conn.close()
 
 
-def login_pelamar(nama_lengkap, tanggal_lahir):
+def login_pelamar(email, tanggal_lahir):
     """Login pelamar berdasarkan nama & tanggal lahir."""
     conn = get_connection()
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT * FROM Pelamar
-        WHERE nama_lengkap = ? AND tanggal_lahir = ?
-    """, (nama_lengkap, tanggal_lahir))
+        WHERE email = ? AND tanggal_lahir = ?
+    """, (email, tanggal_lahir))
     pelamar = cursor.fetchone()
 
     conn.close()
