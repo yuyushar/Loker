@@ -1,21 +1,39 @@
 from features import admin as admin_feat
 from features import pelamar as pelamar_feat
 
+def print_header(title: str):
+    print("\n" + "="*60)
+    print(f"{title:^60}")
+    print("="*60)
+
+def print_input_prompt(prompt: str):
+    return input(f"{prompt:<30}: ").strip()
+
+def confirm(prompt="Konfirmasi"):
+    ans = input(f"{prompt} (yes/no): ").strip().lower()
+    return ans == "yes"
+
 def main_menu():
     while True:
         try:
-            print("\n=== SI LOWONGAN - MENU UTAMA ===")
+            print_header("SI LOWONGAN - MENU UTAMA")
             print("1. Masuk sebagai Admin")
             print("2. Masuk sebagai Pelamar")
             print("3. Keluar")
-            choice = input("Pilih opsi: ").strip()
+            choice = print_input_prompt("Pilih opsi")
+
             if choice == "1":
-                admin_feat.menu_admin()
+                try:
+                    admin_feat.menu_admin()
+                except AttributeError:
+                    print("Fitur admin belum lengkap (menu_admin tidak ditemukan).")
             elif choice == "2":
-                pelamar_feat.menu_pelamar()
+                try:
+                    pelamar_feat.menu_pelamar()
+                except AttributeError:
+                    print("Fitur pelamar belum lengkap (menu_pelamar tidak ditemukan).")
             elif choice == "3":
-                sure = input("Konfirmasi keluar? (yes/no): ").strip().lower()
-                if sure == "yes":
+                if confirm("Yakin ingin keluar?"):
                     print("Terima kasih. Program selesai.")
                     break
                 else:
