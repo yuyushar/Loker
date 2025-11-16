@@ -122,6 +122,7 @@ def create_tables():
         status TEXT CHECK (
             status IN ('Dikirim','Diterima','Ditolak','AutoReject')
         ) DEFAULT 'Dikirim',
+        alasan_reject TEXT,
         FOREIGN KEY (lowongan_id) REFERENCES Lowongan(lowongan_id)
             ON DELETE CASCADE ON UPDATE CASCADE,
         FOREIGN KEY (pelamar_id) REFERENCES Pelamar(pelamar_id)
