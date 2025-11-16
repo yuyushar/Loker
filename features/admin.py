@@ -5,39 +5,8 @@ from database.lowongan_db import (
     delete_lowongan, get_lowongan_by_id
 )
 import datetime
+from utils.utils import print_header, print_input_prompt, input_angka, input_konfirmasi, pause
 
-# =========================== UTILITAS ===========================
-def print_input_prompt(prompt: str):
-    return input(f"{prompt:<30}: ")
-
-def input_angka(prompt, min_val=None, max_val=None):
-    while True:
-        try:
-            val = int(print_input_prompt(prompt))
-            if (min_val is not None and val < min_val) or (max_val is not None and val > max_val):
-                print(f"Pilihan tidak valid! Mohon pilih angka {min_val}-{max_val}.")
-                continue
-            return val
-        except ValueError:
-            print("Input harus berupa angka!")
-
-def input_konfirmasi(prompt, options):
-    options_str = '/'.join(options)
-    while True:
-        val = print_input_prompt(f"{prompt} [{options_str}]").strip().capitalize()
-        if val in options:
-            return val
-        print(f"Input tidak valid! Pilih salah satu: {options_str}")
-
-def print_header(title):
-    print("\n" + "="*60)
-    print(f"{title:^60}")
-    print("="*60)
-
-def pause():
-    input("\nTekan [Enter] untuk kembali...")
-
-# =========================== LOGIN ADMIN ===========================
 def menu_admin():
     print_header("LOGIN ADMIN")
     email = print_input_prompt("Masukkan email admin").strip()
@@ -77,7 +46,6 @@ def menu_admin():
             pause()
             break
 
-# =========================== CRUD LOWONGAN ===========================
 def tampilkan_lowongan():
     while True:
         print_header("DETAIL LOWONGAN")
@@ -90,13 +58,13 @@ def tampilkan_lowongan():
         for i, row in enumerate(data, start=1):
             print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
 
-        pilih = print_input_prompt("Pilih nomor lowongan / 0 keluar").strip()
+        pilih = print_input_prompt("Pilih lowongan / ketik [keluar]").strip().lower()
+        if pilih == 'keluar':
+            break
         if not pilih.isdigit():
             print("Input harus berupa angka.")
             continue
         pilih = int(pilih)
-        if pilih == 0:
-            break
         if pilih < 1 or pilih > len(data):
             print("Nomor tidak ditemukan.")
             continue
@@ -199,7 +167,6 @@ def tambah_lowongan():
         print(f"Gagal menambahkan lowongan: {e}")
     pause()
 
-# =========================== EDIT LOWONGAN ===========================
 def edit_lowongan():
     mapping_pendidikan = {
         'TIDAKADA': 'Tidak Ada', 'SD': 'SD', 'SMP': 'SMP', 'SMA': 'SMA/SMK', 'SMK': 'SMA/SMK',
@@ -218,10 +185,10 @@ def edit_lowongan():
         for i, row in enumerate(data, start=1):
             print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
 
-        pilih = print_input_prompt("Pilih nomor lowongan / 0 keluar").strip()
+        pilih = print_input_prompt("Pilih lowongan / ketik [keluar]").strip().lower()
+        if pilih == 'keluar': break
         if not pilih.isdigit(): continue
         pilih = int(pilih)
-        if pilih == 0: break
         if pilih < 1 or pilih > len(data): continue
 
         selected_id = data[pilih-1]['lowongan_id']
@@ -231,7 +198,6 @@ def edit_lowongan():
             pause()
             continue
 
-        # Tampilkan detail lama sebagai referensi
         print_header("DETAIL LOWONGAN (Referensi)")
         for key, label in [
             ('lowongan_id', 'ID'), ('judul_lowongan', 'Judul'), ('nama_perusahaan', 'Perusahaan'),
@@ -243,20 +209,15 @@ def edit_lowongan():
         ]:
             print(f"{label:<30} : {detail.get(key, 'Tidak ditentukan')}")
 
-        # Konfirmasi sebelum lanjut edit
         if input_konfirmasi("Apakah ingin mengedit lowongan ini?", ["Yes", "No"]) == "No":
             continue
 
-        print("\nMasukkan data baru (kosongkan jika tidak ingin mengubah field tertentu):")
-
-        # Input baru (kosong = tidak update)
         judul = print_input_prompt("Judul").strip()
         deskripsi = print_input_prompt("Deskripsi").strip()
         nama_pt = print_input_prompt("Nama Perusahaan").strip()
         kontak = print_input_prompt("Kontak").strip()
         pengalaman = print_input_prompt("Pengalaman").strip()
 
-        # Jenis (Magang/Kerja)
         jenis = None
         while True:
             jenis_input = print_input_prompt("Jenis (Magang/Kerja)").capitalize().strip()
@@ -266,7 +227,6 @@ def edit_lowongan():
                 break
             print("Jenis tidak valid! Pilihan hanya 'Magang' atau 'Kerja'.")
 
-        # Deadline
         deadline = None
         while True:
             deadline_input = print_input_prompt("Deadline (YYYY-MM-DD)").strip()
@@ -283,7 +243,6 @@ def edit_lowongan():
 
         lokasi = print_input_prompt("Lokasi").strip()
 
-        # Minimal Pendidikan
         min_pendidikan = None
         while True:
             min_pendidikan_input = print_input_prompt("Minimal Pendidikan").upper().replace(" ", "")
@@ -293,7 +252,6 @@ def edit_lowongan():
                 break
             print("Pendidikan tidak valid!")
 
-        # Jenis Kelamin
         jenis_kelamin = None
         while True:
             jenis_kelamin_input = print_input_prompt("Jenis Kelamin (L/P/Bebas)").upper().strip()
@@ -303,7 +261,6 @@ def edit_lowongan():
                 break
             print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki, Perempuan, atau Bebas.")
 
-        # Minimal dan Maksimal Umur
         minimal_umur = maksimal_umur = None
         while True:
             min_umur_input = print_input_prompt("Minimal Umur").strip()
@@ -320,7 +277,6 @@ def edit_lowongan():
             except ValueError:
                 print("Masukkan angka valid!")
 
-        # Slot
         slot = None
         while True:
             slot_input = print_input_prompt("Jumlah Slot").strip()
@@ -330,7 +286,6 @@ def edit_lowongan():
                 break
             print("Slot harus berupa angka > 0.")
 
-        # Susun data update, hanya field yang diisi
         data_update = {}
         if judul: data_update['judul_lowongan'] = judul
         if deskripsi: data_update['deskripsi_pekerjaan'] = deskripsi
@@ -359,7 +314,6 @@ def edit_lowongan():
         if input_konfirmasi("Apakah ingin mengedit lowongan lain?", ["Yes", "No"]) == "No":
             break
 
-# =========================== HAPUS LOWONGAN ===========================
 def hapus_data_lowongan():
     while True:
         print_header("HAPUS LOWONGAN")
@@ -371,10 +325,10 @@ def hapus_data_lowongan():
         for i, row in enumerate(data, start=1):
             print(f"{i}. {row['judul_lowongan']} - {row['nama_perusahaan']} (Deadline: {row['deadline']})")
 
-        pilih = print_input_prompt("Pilih nomor lowongan / 0 keluar").strip()
+        pilih = print_input_prompt("Pilih lowongan / ketik [keluar]").strip().lower()
+        if pilih == 'keluar': break
         if not pilih.isdigit(): continue
         pilih = int(pilih)
-        if pilih == 0: break
         if pilih < 1 or pilih > len(data): continue
 
         selected_id = data[pilih-1]['lowongan_id']
@@ -403,7 +357,6 @@ def hapus_data_lowongan():
         if input_konfirmasi("Apakah ingin menghapus lowongan lain?", ["Yes","No"]) == "No":
             break
 
-# =========================== REVIEW LAMARAN ===========================
 def review_lamaran():
     kolom = ["nama_lengkap", "tanggal_lahir", "jenis_kelamin", "alamat", "email", "pengalaman", "pendidikan_terakhir"]
     while True:
@@ -413,24 +366,34 @@ def review_lamaran():
             pause()
             return
 
-        print_header("REVIEW LAMARAN")
-        for row in data:
-            print(f"[{row['lamaran_id']}] {row['nama_lengkap']} - {row['judul_lowongan']} ({row['status']})")
+        data = sorted(data, key=lambda x: x['lamaran_id'])
 
-        id_lam = print_input_prompt("Masukkan ID lamaran / keluar").strip()
-        if id_lam.lower() == "keluar": break
-        if not id_lam.isdigit(): continue
-        lamaran_terpilih = next((r for r in data if r['lamaran_id']==int(id_lam)), None)
-        if not lamaran_terpilih:
-            print("ID lamaran tidak ditemukan.")
+        print_header("REVIEW LAMARAN")
+        for i, row in enumerate(data, start=1):
+            print(f"{i}. {row['nama_lengkap']} - {row['judul_lowongan']} ({row['status']})")
+
+        pilih = print_input_prompt("Masukkan nomor lamaran / ketik [keluar]").strip().lower()
+        if pilih == 'keluar': break
+        if not pilih.isdigit(): continue
+        pilih = int(pilih)
+        if pilih < 1 or pilih > len(data): 
+            print("Nomor tidak valid.")
             continue
 
+        lamaran_terpilih = data[pilih-1]
         print_header("DETAIL LAMARAN")
         for key in kolom + ["judul_lowongan", "status"]:
             print(f"{key.replace('_',' ').capitalize():<30} : {lamaran_terpilih.get(key,'-')}")
-        
-        if input_konfirmasi("Ubah status lamaran?", ["Yes","No"]) == "Yes":
+        if lamaran_terpilih.get("status") == "AutoReject":
+            alasan = lamaran_terpilih.get("alasan_reject", "Tidak ada alasan spesifik")
+            print(f"{'Alasan Ditolak':<30}: {alasan}")
+
+        if input_konfirmasi("Apakah kamu ingin ubah status lamaran?", ["Yes","No"]) == "Yes":
             status_baru = input_konfirmasi("Pilih status", ["Diterima","Ditolak"])
-            ubah_status_lamaran(lamaran_terpilih['lamaran_id'], status_baru)
+            alasan = None
+            if status_baru == "Ditolak":
+                alasan = print_input_prompt("Masukkan alasan penolakan").strip()
+            ubah_status_lamaran(lamaran_terpilih['lamaran_id'], status_baru, alasan_reject=alasan)
             print("Status lamaran berhasil diperbarui!")
         pause()
+

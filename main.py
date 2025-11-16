@@ -1,13 +1,6 @@
 from features import admin as admin_feat
 from features import pelamar as pelamar_feat
-
-def print_header(title: str):
-    print("\n" + "="*60)
-    print(f"{title:^60}")
-    print("="*60)
-
-def print_input_prompt(prompt: str):
-    return input(f"{prompt:<30}: ").strip()
+from utils.utils import print_header, print_input_prompt
 
 def confirm(prompt="Konfirmasi"):
     ans = input(f"{prompt} (yes/no): ").strip().lower()

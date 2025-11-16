@@ -1,18 +1,18 @@
 from .connection import get_connection
 from typing import List, Dict, Optional
 
-def tambah_lamaran(id_pelamar: int, id_lowongan: int, tanggal_lamaran: str) -> int:
-    """Menambah data lamaran baru."""
+def tambah_lamaran(id_pelamar: int, id_lowongan: int, tanggal_lamaran: str, status="Dikirim", alasan_reject=None) -> int:
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO lamaran (lowongan_id, pelamar_id, tanggal_lamaran)
-        VALUES (?, ?, ?)
-    """, (id_lowongan, id_pelamar, tanggal_lamaran))
+        INSERT INTO lamaran (lowongan_id, pelamar_id, tanggal_lamaran, status, alasan_reject)
+        VALUES (?, ?, ?, ?, ?)
+    """, (id_lowongan, id_pelamar, tanggal_lamaran, status, alasan_reject))
     conn.commit()
     lamaran_id = cur.lastrowid
     conn.close()
     return lamaran_id
+
 
 def lihat_semua_lamaran() -> List[Dict]:
     conn = get_connection()
@@ -31,8 +31,10 @@ def lihat_semua_lamaran() -> List[Dict]:
             p.pengalaman,
             p.pendidikan_terakhir,
             lo.judul_lowongan,
+            lo.nama_perusahaan,
             l.tanggal_lamaran,
-            l.status
+            l.status,
+            l.alasan_reject
         FROM lamaran l
         JOIN pelamar p ON l.pelamar_id = p.pelamar_id
         JOIN lowongan lo ON l.lowongan_id = lo.lowongan_id
@@ -51,14 +53,14 @@ def cari_lamaran_by_id(lamaran_id: int) -> Optional[Dict]:
     conn.close()
     return dict(row) if row else None
 
-def ubah_status_lamaran(lamaran_id: int, status_baru: str) -> bool:
-    """Mengubah status lamaran (Diterima, Ditolak, Menunggu, dsb)."""
+def ubah_status_lamaran(lamaran_id: int, status_baru: str, alasan_reject: str = None) -> bool:
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("""
-        UPDATE lamaran SET status = ?
+        UPDATE lamaran 
+        SET status = ?, alasan_reject = ?
         WHERE lamaran_id = ?
-    """, (status_baru, lamaran_id))
+    """, (status_baru, alasan_reject, lamaran_id))
     conn.commit()
     berhasil = cur.rowcount > 0
     conn.close()
