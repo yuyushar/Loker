@@ -51,7 +51,7 @@ def menu_pelamar():
             daftar_pelamar()
         elif pilihan == 3:
             print("Keluar dari menu pelamar...")
-            main_menu()
+            break
 
 def login_menu():
     print_header("LOGIN PELAMAR")
