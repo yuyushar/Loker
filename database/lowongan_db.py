@@ -20,14 +20,12 @@ def create_lowongan(data: Dict) -> int:
     )
     return execute_query(query, params, return_id=True)
 
-#Liat lowongan
-def get_all_lowongan() -> List[Dict]: #Semua lowongan
-    return fetch_all("SELECT * FROM lowongan ORDER BY tanggal_posting DESC")
+def get_all_lowongan() -> List[Dict]: 
+    return fetch_all("SELECT * FROM lowongan ORDER BY lowongan_id ASC")
 
-def get_lowongan_by_id(lowongan_id: int) -> Optional[Dict]: #Liat dari ID doang
+def get_lowongan_by_id(lowongan_id: int) -> Optional[Dict]: 
     return fetch_one("SELECT * FROM lowongan WHERE lowongan_id = ?", (lowongan_id,))
 
-# Update lowongan
 def update_lowongan(lowongan_id: int, fields: Dict) -> bool:
     if not fields:
         return False
@@ -37,7 +35,6 @@ def update_lowongan(lowongan_id: int, fields: Dict) -> bool:
     execute_query(f"UPDATE lowongan SET {keys} WHERE lowongan_id = ?", tuple(vals))
     return True
 
-# Hapus Lowongan
 def delete_lowongan(lowongan_id: int) -> bool:
     execute_query("DELETE FROM lowongan WHERE lowongan_id = ?", (lowongan_id,))
     return True
