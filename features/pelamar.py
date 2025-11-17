@@ -55,8 +55,13 @@ def daftar_pelamar():
                 break
         except ValueError:
             print("Format tanggal salah! Harus YYYY-MM-DD.")
-    gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L', 'P': 'P', 'PEREMPUAN': 'P'}
-    jenis_kelamin = input_konfirmasi("Jenis Kelamin", ["L", "P"])
+    gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L','P': 'P', 'PEREMPUAN': 'P'}
+    while True:
+        jenis_kelamin_input = print_input_prompt("Jenis Kelamin (L/P)").upper().strip()
+        if jenis_kelamin_input in gender_mapping:
+            jenis_kelamin = gender_mapping[jenis_kelamin_input]
+            break
+        print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki/L atau Perempuan/P ")
     while True:
         alamat = print_input_prompt("Alamat").strip()
         if not alamat:

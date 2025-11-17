@@ -121,7 +121,7 @@ def tambah_lowongan():
         if min_pendidikan in mapping_pendidikan:
             min_pendidikan = mapping_pendidikan[min_pendidikan]
             break
-        print("Pendidikan tidak valid!")
+        print("Input tidak valid! Silakan isi minimal pendidikan(SMK/SMA, D3, D4/S1, dll)")
 
     gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L','P': 'P', 'PEREMPUAN': 'P','B': 'Bebas', 'BEBAS': 'Bebas'}
     while True:
@@ -129,7 +129,7 @@ def tambah_lowongan():
         if jenis_kelamin_input in gender_mapping:
             jenis_kelamin = gender_mapping[jenis_kelamin_input]
             break
-        print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki, Perempuan, atau Bebas.")
+        print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki/L, Perempuan/P, atau Bebas/B.")
 
     while True:
         try:
