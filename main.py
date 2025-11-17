@@ -1,10 +1,6 @@
 from features import admin as admin_feat
 from features import pelamar as pelamar_feat
-from utils.utils import print_header, print_input_prompt
-
-def confirm(prompt="Konfirmasi"):
-    ans = input(f"{prompt} (yes/no): ").strip().lower()
-    return ans == "yes"
+from utils.utils import print_header, print_input_prompt, input_konfirmasi
 
 def main_menu():
     while True:
@@ -26,16 +22,19 @@ def main_menu():
                 except AttributeError:
                     print("Fitur pelamar belum lengkap (menu_pelamar tidak ditemukan).")
             elif choice == "3":
-                if confirm("Yakin ingin keluar?"):
-                    print("Terima kasih. Program selesai.")
-                    break
-                else:
-                    continue
-            else:
-                print("Pilihan tidak valid.")
-        except KeyboardInterrupt:
-            print("\nProgram dihentikan oleh user.")
-            break
+                while True:
+                    try:
+                        konfirmasi = input_konfirmasi("Yakin ingin keluar?",["Yes","No"]).title().replace(" ","")
+                        if konfirmasi == "Yes":
+                            print("Terima kasih. Program selesai.")
+                            break
+                        elif konfirmasi== "No" :
+                            continue
+                        else:
+                            print("Pilihan tidak valid.")
+                    except KeyboardInterrupt:
+                        print("\nProgram dihentikan oleh user.")
+                        break
         except Exception as e:
             print(f"Terjadi error: {e}")
 
