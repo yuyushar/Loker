@@ -20,7 +20,7 @@ def input_angka(prompt, min_val=None, max_val=None):
 def input_konfirmasi(prompt, options):
     options_str = '/'.join(options)
     while True:
-        val = input(f"{prompt} [{options_str}]: ").strip().capitalize()
+        val = input(f"{f'{prompt} [{options_str}]':<30}: ").strip().capitalize()
         if val in options:
             return val
         print(f"Input tidak valid! Pilih salah satu: {options_str}")
