@@ -252,6 +252,12 @@ def lamar_lowongan(pelamar_id):
         if kriteria_gender in ['L', 'P'] and pelamar_gender != kriteria_gender:
             alasan_reject.append("jenis kelamin tidak sesuai")
 
+        slot = detail.get("slot", 0)
+        if slot <= 0:
+            print("Slot lowongan sudah habis. Anda tidak dapat melamar.")
+            pause()
+            continue
+
         if alasan_reject:
             tambah_lamaran(pelamar_id, selected['lowongan_id'], today.isoformat(), status="AutoReject", alasan_reject=", ".join(alasan_reject))
             print(f"Lamaran otomatis ditolak: Karena {', '.join(alasan_reject)}.")

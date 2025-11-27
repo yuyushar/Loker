@@ -4,7 +4,10 @@ def print_header(judul: str):
     print("="*60)
 
 def print_input_prompt(prompt: str):
-    return input(f"{prompt:<30}: ")
+    try:
+        return input(f"{prompt:<30}: ")
+    except KeyboardInterrupt:
+        raise  
 
 def input_angka(prompt, min_val=None, max_val=None):
     while True:

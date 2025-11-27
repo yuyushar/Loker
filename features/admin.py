@@ -373,27 +373,57 @@ def review_lamaran():
             print(f"{i}. {row['nama_lengkap']} - {row['judul_lowongan']} ({row['status']})")
 
         pilih = print_input_prompt("Masukkan nomor lamaran / ketik [keluar]").strip().lower()
-        if pilih == 'keluar': break
-        if not pilih.isdigit(): continue
+        if pilih == 'keluar': 
+            break
+        if not pilih.isdigit(): 
+            continue
+
         pilih = int(pilih)
-        if pilih < 1 or pilih > len(data): 
+        if pilih < 1 or pilih > len(data):
             print("Nomor tidak valid.")
             continue
 
-        lamaran_terpilih = data[pilih-1]
+        lamaran_terpilih = data[pilih - 1]
+
         print_header("DETAIL LAMARAN")
         for key in kolom + ["judul_lowongan", "status"]:
-            print(f"{key.replace('_',' ').capitalize():<30} : {lamaran_terpilih.get(key,'-')}")
+            print(f"{key.replace('_',' ').capitalize():<30} : {lamaran_terpilih.get(key, '-')}")
+
         if lamaran_terpilih.get("status") == "AutoReject":
             alasan = lamaran_terpilih.get("alasan_reject", "Tidak ada alasan spesifik")
             print(f"{'Alasan Ditolak':<30}: {alasan}")
+        
+        if lamaran_terpilih.get("status") == "Diterima":
+            print("\nLamaran ini sudah diterima, Silahkan review lamaran lain")
+            pause()
+            continue
 
-        if input_konfirmasi("Apakah kamu ingin ubah status lamaran?", ["Yes","No"]) == "Yes":
-            status_baru = input_konfirmasi("Pilih status", ["Diterima","Ditolak"])
+        if input_konfirmasi("Apakah kamu ingin ubah status lamaran?", ["Yes", "No"]) == "Yes":
+            status_baru = input_konfirmasi("Pilih status", ["Diterima", "Ditolak"])
+
+            low_id = lamaran_terpilih["lowongan_id"]
+            low = get_lowongan_by_id(low_id)
+
+            if status_baru == "Diterima":
+                if low and low["slot"] <= 0:
+                    print("\nSlot lowongan ini sudah HABIS, tidak bisa menerima pelamar lagi!")
+                    pause()
+                    continue
+
             alasan = None
             if status_baru == "Ditolak":
                 alasan = print_input_prompt("Masukkan alasan penolakan").strip()
-            ubah_status_lamaran(lamaran_terpilih['lamaran_id'], status_baru, alasan_reject=alasan)
-            print("Status lamaran berhasil diperbarui!")
-        pause()
 
+            ubah_status_lamaran(
+                lamaran_terpilih['lamaran_id'], 
+                status_baru, 
+                alasan_reject=alasan
+            )
+
+            print("Status lamaran berhasil diperbarui!")
+
+            if status_baru == "Diterima":
+                update_lowongan(low_id, {"slot": low["slot"] - 1})
+                print(f"Slot lowongan berkurang! Sisa slot: {low['slot'] - 1}")
+
+        pause()

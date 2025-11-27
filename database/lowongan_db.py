@@ -38,3 +38,22 @@ def update_lowongan(lowongan_id: int, fields: Dict) -> bool:
 def delete_lowongan(lowongan_id: int) -> bool:
     execute_query("DELETE FROM lowongan WHERE lowongan_id = ?", (lowongan_id,))
     return True
+
+def kurangi_slot(lowongan_id: int) -> bool:
+    row = fetch_one("SELECT slot FROM lowongan WHERE lowongan_id = ?", (lowongan_id,))
+    if not row:
+        return False 
+    current_slot = row["slot"]
+    if current_slot <= 0:
+        return False
+    execute_query(
+        "UPDATE lowongan SET slot = slot - 1 WHERE lowongan_id = ?", 
+        (lowongan_id,)
+    )
+    return True
+
+def is_lowongan_full(lowongan_id: int) -> bool:
+    row = fetch_one("SELECT slot FROM lowongan WHERE lowongan_id = ?", (lowongan_id,))
+    if not row:
+        return True 
+    return row["slot"] <= 0
