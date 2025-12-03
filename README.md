@@ -20,7 +20,7 @@ python main.py
 ---
 
 ## STRUKTUR FOLDER APLIKASI
-si_lowker/  
+Loker/  
 │  
 ├── main.py  
 ├── database/  
@@ -32,7 +32,9 @@ si_lowker/
 │   └── si_lowker.db  
 ├── features/  
 │   ├── admin.py  
-│   └── pelamar.py  
+│   └── pelamar.py
+├── utils
+│   └── utils.py
 └── README.md  
 
 ---
