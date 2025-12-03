@@ -1,94 +1,73 @@
-from .connection import get_connection
+from .connection import fetch_all, fetch_one, execute_query
 
 # ==========================================================
 #  CRUD untuk Tabel Pelamar
 # ==========================================================
 
+# TAMBAH PELAMAR BARU KE DATABASE
 def tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email,
                    pengalaman, pendidikan_terakhir):
     """Menambahkan pelamar baru ke database."""
-    conn = get_connection()
-    cursor = conn.cursor()
+    query = """
+        INSERT INTO Pelamar (
+            nama_lengkap, tanggal_lahir, jenis_kelamin,
+            alamat, email, pengalaman, pendidikan_terakhir
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    """
+    data = (nama_lengkap, tanggal_lahir, jenis_kelamin,
+            alamat, email, pengalaman, pendidikan_terakhir)
 
-    try:
-        cursor.execute("""
-            INSERT INTO Pelamar (
-                nama_lengkap, tanggal_lahir, jenis_kelamin,
-                alamat, email, pengalaman, pendidikan_terakhir
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (nama_lengkap, tanggal_lahir, jenis_kelamin,
-              alamat, email, pengalaman, pendidikan_terakhir))
-
-        conn.commit()
+    result = execute_query(query, data)
+    if result > 0:
         print("Biodata pelamar berhasil disimpan!")
-    except Exception as e:
-        print("Gagal menambahkan pelamar:", e)
-    finally:
-        conn.close()
+    else:
+        print("Gagal menambahkan pelamar.")
 
-
+# LOGIN PELAMAR BERDASARKAN EMAIL & TANGGAL LAHIR
 def login_pelamar(email, tanggal_lahir):
     """Login pelamar berdasarkan nama & tanggal lahir."""
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT * FROM Pelamar
-        WHERE email = ? AND tanggal_lahir = ?
-    """, (email, tanggal_lahir))
-    pelamar = cursor.fetchone()
-
-    conn.close()
+    query = "SELECT * FROM Pelamar WHERE email = ? AND tanggal_lahir = ?"
+    pelamar = fetch_one(query, (email, tanggal_lahir))
     return pelamar
 
-
+# LIHAT BIODATA PELAMAR BERDASARKAN ID
 def lihat_biodata(pelamar_id):
     """Melihat biodata pelamar berdasarkan ID."""
-    conn = get_connection()
-    cursor = conn.cursor()
+    query = "SELECT * FROM Pelamar WHERE pelamar_id = ?"
+    biodata = fetch_one(query, (pelamar_id,))
+    return biodata
 
-    cursor.execute("SELECT * FROM Pelamar WHERE pelamar_id = ?", (pelamar_id,))
-    data = cursor.fetchone()
-
-    conn.close()
-    return data
-
-
+# EDIT BIODATA PELAMAR BERDASARKAN ID
 def edit_biodata(pelamar_id, **kwargs):
     """
     Edit biodata pelamar.
     Parameter dikirim dalam bentuk key=value, misalnya:
     edit_biodata(1, alamat='Jl. Merdeka', pengalaman=2)
     """
-    conn = get_connection()
-    cursor = conn.cursor()
-
+    if not kwargs:
+        print("Tidak ada data yang diperbarui.")
+        return
+    
     fields = ", ".join([f"{key} = ?" for key in kwargs.keys()])
-    values = list(kwargs.values())
-    values.append(pelamar_id)
+    values = list(kwargs.values()) + [pelamar_id]
 
     query = f"UPDATE Pelamar SET {fields} WHERE pelamar_id = ?"
+    result = execute_query(query, tuple(values))
 
-    try:
-        cursor.execute(query, tuple(values))
-        conn.commit()
+    if result > 0:
         print("Biodata pelamar berhasil diperbarui!")
-    except Exception as e:
-        print("Gagal mengedit biodata:", e)
-    finally:
-        conn.close()
+    else:
+        print("Gagal mengedit biodata atau ID tidak ditemukan.")
 
-#kalau nanti ada hapus pelamar buat tugasnya keknya blm perlu
+#kalau nanti ada hapus pelamar, Saat ini tim pengembang belum kepikiran
 def hapus_pelamar(pelamar_id):
     """Menghapus pelamar dari database."""
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM Pelamar WHERE pelamar_id = ?", (pelamar_id,))
-    conn.commit()
-    conn.close()
-    print(f"Pelamar ID {pelamar_id} berhasil dihapus.")
-
+    query = "DELETE FROM Pelamar WHERE pelamar_id = ?"
+    result = execute_query(query, (pelamar_id,))
+    if result > 0:
+        print(f"Pelamar dengan ID {pelamar_id} berhasil dihapus.")
+    else:
+        print("Pelamar tidak ditemukan.")
 
 # ==========================================================
 #  TESTING LANGSUNG DOANG!!
