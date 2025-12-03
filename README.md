@@ -20,7 +20,7 @@ python main.py
 ---
 
 ## STRUKTUR FOLDER APLIKASI
-Loker/  
+si_lowker/  
 │  
 ├── main.py  
 ├── database/  
