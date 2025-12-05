@@ -7,7 +7,7 @@ from utils.utils import print_header, print_input_prompt, input_angka, input_kon
 
 def menu_pelamar():
     while True:
-        print_header("LOGIN PELAMAR")
+        print_header("LOGIN/PENDAFTARAN PELAMAR")
         print("1. Login Pelamar")
         print("2. Daftar Pelamar Baru")
         print("3. Keluar")
