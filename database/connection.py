@@ -85,7 +85,7 @@ def create_tables():
         alamat TEXT,
         email TEXT UNIQUE NOT NULL,
         pengalaman TEXT,
-        riwayat_pendidikan TEXT NOT NULL, 
+        riwayat_pendidikan TEXT NOT NULL
     );
 
     CREATE TABLE Lowongan (
