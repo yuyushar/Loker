@@ -6,16 +6,16 @@ from .connection import fetch_all, fetch_one, execute_query
 
 # TAMBAH PELAMAR BARU KE DATABASE
 def tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email,
-                   pengalaman, pendidikan_terakhir):
+                   pengalaman, riwayat_pendidikan):
     """Menambahkan pelamar baru ke database."""
     query = """
         INSERT INTO Pelamar (
             nama_lengkap, tanggal_lahir, jenis_kelamin,
-            alamat, email, pengalaman, pendidikan_terakhir
+            alamat, email, pengalaman, riwayat_pendidikan
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
     """
     data = (nama_lengkap, tanggal_lahir, jenis_kelamin,
-            alamat, email, pengalaman, pendidikan_terakhir)
+            alamat, email, pengalaman, riwayat_pendidikan)
 
     result = execute_query(query, data)
     if result > 0:
@@ -83,7 +83,7 @@ def hapus_pelamar(pelamar_id):
 #         alamat="Jl. Mawar No. 12",
 #         email="budi@example.com",
 #         pengalaman=1,
-#         pendidikan_terakhir="SMA/SMK"
+#         riwayat_pendidikan="SMA/SMK"
 #     )
 
 #     # Coba login

@@ -85,9 +85,7 @@ def create_tables():
         alamat TEXT,
         email TEXT UNIQUE NOT NULL,
         pengalaman TEXT,
-        pendidikan_terakhir TEXT CHECK (
-            pendidikan_terakhir IN ('Tidak Ada','SD','SMP','SMA/SMK','D1','D2','D3','D4/S1','S2','S3')
-        ) NOT NULL
+        riwayat_pendidikan TEXT NOT NULL, 
     );
 
     CREATE TABLE Lowongan (
@@ -95,7 +93,8 @@ def create_tables():
         judul_lowongan TEXT NOT NULL,
         deskripsi_pekerjaan TEXT NOT NULL,
         lokasi TEXT,
-        jenis TEXT CHECK (jenis IN ('Magang','Kerja')) NOT NULL,
+        jenis TEXT CHECK (jenis IN ('Full Time','Part Time','Freelance')) NOT NULL,
+        model_kerja TEXT CHECK (model_kerja IN ('Offline','Online','Hybrid')) NOT NULL DEFAULT 'Offline',
         tanggal_posting TEXT NOT NULL,
         deadline TEXT NOT NULL,
         nama_perusahaan TEXT NOT NULL,
