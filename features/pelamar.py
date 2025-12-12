@@ -5,6 +5,21 @@ from database.lowongan_db import get_all_lowongan, get_lowongan_by_id
 from database.lamaran_db import tambah_lamaran, lihat_semua_lamaran
 from utils.utils import print_header, print_input_prompt, input_angka, input_konfirmasi, pause
 
+def get_pendidikan_rank(pendidikan):
+    mapping = {
+        'TIDAK ADA': 0, 
+        'SD': 1, 
+        'SMP': 2,
+        'SMA': 3, 'SMK': 3, 'SMA/SMK': 3,
+        'D1': 4, 'D2': 5, 'D3': 6,
+        'D4': 7, 'S1': 7, 'D4/S1': 7,
+        'S2': 8, 'S3': 9
+    }
+    clean_p = pendidikan.strip().upper()
+    if clean_p in mapping:
+        return mapping[clean_p]
+    return 0
+
 def menu_pelamar():
     while True:
         print_header("LOGIN/PENDAFTARAN PELAMAR")
@@ -55,6 +70,7 @@ def daftar_pelamar():
                 break
         except ValueError:
             print("Format tanggal salah! Harus YYYY-MM-DD.")
+    
     gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L','P': 'P', 'PEREMPUAN': 'P'}
     while True:
         jenis_kelamin_input = print_input_prompt("Jenis Kelamin (L/P)").upper().strip()
@@ -62,39 +78,61 @@ def daftar_pelamar():
             jenis_kelamin = gender_mapping[jenis_kelamin_input]
             break
         print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki/L atau Perempuan/P ")
+    
     while True:
         alamat = print_input_prompt("Alamat").strip()
         if not alamat:
             print("Alamat tidak boleh kosong! Silakan isi kembali.")
         else:
             break
+    
     while True:
         email = print_input_prompt("Email").strip()
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             print("Format email tidak valid!")
         else:
             break
+            
     while True:
         pengalaman = print_input_prompt("Pengalaman").strip()
         if not pengalaman:
             print("Pengalaman tidak boleh kosong! Jika tidak ada pengalaman, ketik 'Tidak ada'.")
         else:
             break
-    pendidikan_map = {
-        'TIDAK ADA': 'Tidak Ada', 'SD': 'SD', 'SMP': 'SMP',
-        'SMA': 'SMA/SMK', 'SMK': 'SMA/SMK', 'SMA/SMK': 'SMA/SMK',
-        'D1': 'D1', 'D2': 'D2', 'D3': 'D3',
-        'D4': 'D4/S1', 'S1': 'D4/S1', 'D4/S1': 'D4/S1',
-        'S2': 'S2', 'S3': 'S3'
+            
+    pendidikan_valid_set = {
+        'TIDAK ADA', 'SD', 'SMP', 'SMA', 'SMK', 'SMA/SMK',
+        'D1', 'D2', 'D3', 'D4', 'S1', 'D4/S1', 'S2', 'S3'
     }
+    
     while True:
-        pendidikan_terakhir = print_input_prompt("Pendidikan Terakhir").strip().upper()
-        if pendidikan_terakhir in pendidikan_map:
-            pendidikan_terakhir = pendidikan_map[pendidikan_terakhir]
+        print("\nMasukkan Riwayat Pendidikan (pisahkan dengan koma).")
+        print("Contoh: SMA, D3, S1")
+        raw_pendidikan = print_input_prompt("Riwayat Pendidikan").strip().upper()
+        
+        if not raw_pendidikan:
+            print("Pendidikan tidak boleh kosong. Isi 'Tidak Ada' jika belum sekolah.")
+            continue
+            
+        list_pendidikan = [x.strip() for x in raw_pendidikan.split(',')]
+        
+        all_valid = True
+        normalized_list = []
+        for p in list_pendidikan:
+            if p == 'SMA' or p == 'SMK': p = 'SMA/SMK'
+            if p == 'D4' or p == 'S1': p = 'D4/S1'
+            
+            if p not in pendidikan_valid_set:
+                print(f"Jenjang '{p}' tidak dikenali. Gunakan standar (SD, SMP, SMA, SMK, D3, S1, dst).")
+                all_valid = False
+                break
+            normalized_list.append(p)
+            
+        if all_valid:
+            riwayat_pendidikan = ",".join(normalized_list)
             break
-        else:
-            print("Input tidak valid! Silakan isi pendidikan terakhir anda(SMK/SMA, D3, D4/S1, dll)")
-    tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email, pengalaman, pendidikan_terakhir)
+            
+    tambah_pelamar(nama_lengkap, tanggal_lahir, jenis_kelamin, alamat, email, pengalaman, riwayat_pendidikan)
     print("Pendaftaran berhasil!")
     pause()
 
@@ -127,27 +165,34 @@ def lihat_data_pelamar(pelamar_id):
         return
     print_header("BIODATA PELAMAR")
     for key, value in dict(data).items():
-        print(f"{key.replace('_', ' ').capitalize():<30}: {value}")
+        label = key.replace('_', ' ').capitalize()
+        if key == "riwayat_pendidikan": label = "Riwayat Pendidikan"
+        print(f"{label:<30}: {value}")
     pause()
 
 def ubah_biodata(pelamar_id):
     print_header("EDIT BIODATA")
     print("Kosongkan jika tidak ingin diubah.")
-    kolom = ["nama_lengkap", "tanggal_lahir", "jenis_kelamin", "alamat", "email", "pengalaman", "pendidikan_terakhir"]
+    kolom = ["nama_lengkap", "tanggal_lahir", "jenis_kelamin", "alamat", "email", "pengalaman", "riwayat_pendidikan"]
     data_baru = {}
-    pendidikan_map = {
-        'TIDAK ADA': 'Tidak Ada', 'SD': 'SD', 'SMP': 'SMP',
-        'SMA': 'SMA/SMK', 'SMK': 'SMA/SMK', 'SMA/SMK': 'SMA/SMK',
-        'D1': 'D1', 'D2': 'D2', 'D3': 'D3',
-        'D4': 'D4/S1', 'S1': 'D4/S1', 'D4/S1': 'D4/S1',
-        'S2': 'S2', 'S3': 'S3'
+    
+    pendidikan_valid_set = {
+        'TIDAK ADA', 'SD', 'SMP', 'SMA', 'SMK', 'SMA/SMK',
+        'D1', 'D2', 'D3', 'D4', 'S1', 'D4/S1', 'S2', 'S3'
     }
     gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L', 'P': 'P', 'PEREMPUAN': 'P'}
+    
     for k in kolom:
+        label = k.replace('_', ' ').capitalize()
+        if k == "riwayat_pendidikan":
+            label = "Riwayat Pendidikan (pisahkan koma)"
+            
         while True:
-            isi = print_input_prompt(k.replace('_', ' ').capitalize()).strip()
+            isi = print_input_prompt(label).strip()
+            
             if not isi:
                 break
+                
             if k == "nama_lengkap" and not isi.replace(" ", "").isalpha():
                 print("Nama hanya boleh berisi huruf dan spasi!")
                 continue
@@ -166,19 +211,32 @@ def ubah_biodata(pelamar_id):
                 else:
                     print("Jenis kelamin tidak valid! Pilihan hanya: Laki-Laki atau Perempuan")
                     continue
-            elif k == "alamat" and not isi:
-                print("Alamat tidak boleh kosong!")
-                continue
+            elif k == "alamat":
+                pass
             elif k == "email" and not re.match(r"[^@]+@[^@]+\.[^@]+", isi):
                 print("Format email tidak valid!")
                 continue
-            elif k == "pendidikan_terakhir" and isi.upper() in pendidikan_map:
-                isi = pendidikan_map[isi.upper()]
-            elif k == "pendidikan_terakhir" and isi.upper() not in pendidikan_map:
-                print("Pendidikan tidak valid! Contoh: SMA, SMK, D3, D4, S1, S2, dll.")
-                continue
+            elif k == "riwayat_pendidikan":
+                raw_list = [x.strip().upper() for x in isi.split(',')]
+                valid_edu = True
+                norm_list = []
+                for p in raw_list:
+                    if p == 'SMA' or p == 'SMK': p = 'SMA/SMK'
+                    if p == 'D4' or p == 'S1': p = 'D4/S1'
+                    
+                    if p not in pendidikan_valid_set:
+                        print(f"Pendidikan '{p}' tidak valid! Gunakan standar (SMA, SMK, D3, S1, dll).")
+                        valid_edu = False
+                        break
+                    norm_list.append(p)
+                
+                if not valid_edu:
+                    continue
+                isi = ",".join(norm_list)
+
             data_baru[k] = isi
             break
+            
     if data_baru:
         edit_biodata(pelamar_id, **data_baru)
         print("Data berhasil diperbarui!")
@@ -202,6 +260,9 @@ def lamar_lowongan(pelamar_id):
     today = datetime.date.today()
     pelamar_umur = today.year - tgl_lahir.year - ((today.month, today.day) < (tgl_lahir.month, tgl_lahir.day))
     pelamar_gender = pelamar_data['jenis_kelamin'].upper() 
+    
+    pelamar_riwayat_str = pelamar_data.get('riwayat_pendidikan', '')
+    pelamar_riwayat_list = [x.strip() for x in pelamar_riwayat_str.split(',') if x.strip()]
 
     while True:
         print_header("DAFTAR LOWONGAN")
@@ -228,9 +289,15 @@ def lamar_lowongan(pelamar_id):
             continue
 
         print_header("DETAIL LOWONGAN")
-        for key in ['lowongan_id', 'judul_lowongan', 'nama_perusahaan', 'deskripsi_pekerjaan', 'jenis', 
-                    'lokasi', 'kontak', 'min_pendidikan', 'pengalaman', 'jenis_kelamin']:
+        fields_to_show = [
+            'lowongan_id', 'judul_lowongan', 'nama_perusahaan', 'deskripsi_pekerjaan', 
+            'jenis', 'model_kerja', 'lokasi', 'kontak', 'min_pendidikan', 
+            'pengalaman', 'jenis_kelamin'
+        ]
+        
+        for key in fields_to_show:
             print(f"{key.replace('_', ' ').capitalize():<30}: {detail.get(key, 'Tidak ditentukan')}")
+            
         for key in ['minimal_umur', 'maksimal_umur', 'slot']:
             print(f"{key.replace('_', ' ').capitalize():<30}: {detail.get(key, 'Tidak ditentukan')}")
         print(f"{'Deadline':<30}: {detail.get('deadline', 'Tidak ditentukan')}")
@@ -238,10 +305,18 @@ def lamar_lowongan(pelamar_id):
         print("="*60)
 
         alasan_reject = []
-        min_pendidikan = detail.get('min_pendidikan')
-        if min_pendidikan:
-            if pelamar_data['pendidikan_terakhir'].upper() != min_pendidikan.upper():
-                alasan_reject.append("pendidikan tidak sesuai")
+        
+        min_pendidikan_req = detail.get('min_pendidikan')
+        if min_pendidikan_req:
+            req_rank = get_pendidikan_rank(min_pendidikan_req)
+            
+            max_pelamar_rank = 0
+            if pelamar_riwayat_list:
+                ranks = [get_pendidikan_rank(p) for p in pelamar_riwayat_list]
+                max_pelamar_rank = max(ranks)
+            
+            if max_pelamar_rank < req_rank:
+                 alasan_reject.append(f"pendidikan minimal {min_pendidikan_req} (Riwayat Anda: {pelamar_riwayat_str})")
 
         min_umur = detail.get('minimal_umur')
         max_umur = detail.get('maksimal_umur')
@@ -260,7 +335,7 @@ def lamar_lowongan(pelamar_id):
 
         if alasan_reject:
             tambah_lamaran(pelamar_id, selected['lowongan_id'], today.isoformat(), status="AutoReject", alasan_reject=", ".join(alasan_reject))
-            print(f"Lamaran otomatis ditolak: Karena {', '.join(alasan_reject)}.")
+            print(f"Lamaran otomatis ditolak karena: {', '.join(alasan_reject)}.")
             pause()
             break
 
@@ -272,7 +347,6 @@ def lamar_lowongan(pelamar_id):
             break
         else:
             print("Kembali ke daftar lowongan...")
-
 
 def lihat_status_lamaran(pelamar_id):
     data = lihat_semua_lamaran()

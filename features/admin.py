@@ -77,9 +77,13 @@ def tampilkan_lowongan():
             continue
 
         print_header("DETAIL LOWONGAN")
-        for key in ['lowongan_id', 'judul_lowongan', 'nama_perusahaan', 'deskripsi_pekerjaan',
-                    'jenis', 'lokasi', 'kontak', 'min_pendidikan', 'pengalaman', 'jenis_kelamin',
-                    'minimal_umur', 'maksimal_umur', 'slot', 'deadline', 'tanggal_posting']:
+        fields = [
+            'lowongan_id', 'judul_lowongan', 'nama_perusahaan', 'deskripsi_pekerjaan',
+            'jenis', 'model_kerja', 'lokasi', 'kontak', 'min_pendidikan', 
+            'pengalaman', 'jenis_kelamin', 'minimal_umur', 'maksimal_umur', 
+            'slot', 'deadline', 'tanggal_posting'
+        ]
+        for key in fields:
             print(f"{key.replace('_', ' ').capitalize():<30} : {detail.get(key, 'Tidak ditentukan')}")
         pause()
 
@@ -92,11 +96,25 @@ def tambah_lowongan():
     pengalaman = print_input_prompt("Pengalaman").strip()
 
     jenis = ""
+    valid_jenis = ["Freelance", "Part Time", "Fulltime"]
     while True:
-        jenis = print_input_prompt("Jenis (Magang/Kerja)").capitalize()
-        if jenis in ["Magang", "Kerja"]:
+        # Menampilkan opsi di dalam prompt input (di samping)
+        jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Fulltime)").title().strip()
+        if jenis_input in valid_jenis:
+            jenis = jenis_input
             break
-        print("Jenis tidak valid! Pilihan hanya 'Magang' atau 'Kerja'.")
+        print("Jenis tidak valid! Pilihan hanya 'Freelance', 'Part Time', atau 'Fulltime'.")
+
+    model_kerja = ""
+    valid_model = ["Online", "Offline", "Hybrid"]
+    while True:
+        # Menampilkan opsi di dalam prompt input (di samping)
+        model_input = print_input_prompt("Model (Online/Offline/Hybrid)").capitalize().strip()
+        if model_input in valid_model:
+            model_kerja = model_input
+            break
+        print("Model tidak valid! Pilihan hanya 'Online', 'Offline', atau 'Hybrid'.")
+
     tanggal = datetime.date.today().isoformat()
 
     while True:
@@ -154,7 +172,8 @@ def tambah_lowongan():
 
     data = {
         'judul_lowongan': judul, 'deskripsi_pekerjaan': deskripsi, 'lokasi': lokasi,
-        'jenis': jenis, 'tanggal_posting': tanggal, 'deadline': deadline, 'nama_perusahaan': nama_pt,
+        'jenis': jenis, 'model_kerja': model_kerja,
+        'tanggal_posting': tanggal, 'deadline': deadline, 'nama_perusahaan': nama_pt,
         'kontak': kontak, 'pengalaman': pengalaman, 'min_pendidikan': min_pendidikan,
         'jenis_kelamin': jenis_kelamin, 'minimal_umur': minimal_umur, 'maksimal_umur': maksimal_umur,
         'slot': slot, 'admin_id': 1
@@ -199,14 +218,16 @@ def edit_lowongan():
             continue
 
         print_header("DETAIL LOWONGAN (Referensi)")
-        for key, label in [
+        fields_ref = [
             ('lowongan_id', 'ID'), ('judul_lowongan', 'Judul'), ('nama_perusahaan', 'Perusahaan'),
-            ('deskripsi_pekerjaan', 'Deskripsi'), ('jenis', 'Jenis'),
+            ('deskripsi_pekerjaan', 'Deskripsi'), ('jenis', 'Jenis'), 
+            ('model_kerja', 'Model Kerja'),
             ('lokasi', 'Lokasi'), ('kontak', 'Kontak'), ('pengalaman', 'Pengalaman'),
             ('min_pendidikan', 'Minimal Pendidikan'), ('jenis_kelamin', 'Jenis Kelamin'),
             ('minimal_umur', 'Minimal Umur'), ('maksimal_umur', 'Maksimal Umur'),
             ('slot', 'Slot'), ('deadline', 'Deadline'), ('tanggal_posting', 'Tanggal Posting')
-        ]:
+        ]
+        for key, label in fields_ref:
             print(f"{label:<30} : {detail.get(key, 'Tidak ditentukan')}")
 
         if input_konfirmasi("Apakah ingin mengedit lowongan ini?", ["Yes", "No"]) == "No":
@@ -219,13 +240,24 @@ def edit_lowongan():
         pengalaman = print_input_prompt("Pengalaman").strip()
 
         jenis = None
+        valid_jenis = ["Freelance", "Part Time", "Fulltime"]
         while True:
-            jenis_input = print_input_prompt("Jenis (Magang/Kerja)").capitalize().strip()
-            if not jenis_input: break
-            if jenis_input in ["Magang", "Kerja"]:
+            jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Fulltime)").title().strip()
+            if not jenis_input: break 
+            if jenis_input in valid_jenis:
                 jenis = jenis_input
                 break
-            print("Jenis tidak valid! Pilihan hanya 'Magang' atau 'Kerja'.")
+            print("Jenis tidak valid! Pilihan: Freelance, Part Time, Fulltime.")
+
+        model_kerja = None
+        valid_model = ["Online", "Offline", "Hybrid"]
+        while True:
+            model_input = print_input_prompt("Model (Online/Offline/Hybrid)").capitalize().strip()
+            if not model_input: break 
+            if model_input in valid_model:
+                model_kerja = model_input
+                break
+            print("Model tidak valid! Pilihan: Online, Offline, Hybrid.")
 
         deadline = None
         while True:
@@ -293,6 +325,7 @@ def edit_lowongan():
         if kontak: data_update['kontak'] = kontak
         if pengalaman: data_update['pengalaman'] = pengalaman
         if jenis: data_update['jenis'] = jenis
+        if model_kerja: data_update['model_kerja'] = model_kerja
         if deadline: data_update['deadline'] = deadline
         if lokasi: data_update['lokasi'] = lokasi
         if min_pendidikan: data_update['min_pendidikan'] = min_pendidikan
@@ -336,14 +369,16 @@ def hapus_data_lowongan():
         if not detail: continue
 
         print_header("DETAIL LOWONGAN")
-        for key, label in [
+        fields_del = [
             ('lowongan_id', 'ID'), ('judul_lowongan', 'Judul'), ('nama_perusahaan', 'Perusahaan'),
             ('deskripsi_pekerjaan', 'Deskripsi'), ('jenis', 'Jenis'), 
+            ('model_kerja', 'Model Kerja'),
             ('lokasi', 'Lokasi'), ('kontak', 'Kontak'), ('pengalaman', 'Pengalaman'),
             ('min_pendidikan', 'Minimal Pendidikan'), ('jenis_kelamin', 'Jenis Kelamin'),
             ('minimal_umur', 'Minimal Umur'), ('maksimal_umur', 'Maksimal Umur'),
             ('slot', 'Slot'), ('deadline', 'Deadline'), ('tanggal_posting', 'Tanggal Posting')
-        ]:
+        ]
+        for key, label in fields_del:
             print(f"{label:<30} : {detail.get(key, 'Tidak ditentukan')}")
 
         if input_konfirmasi("Yakin ingin menghapus lowongan?", ["Yes","No"]) == "Yes":
@@ -358,7 +393,7 @@ def hapus_data_lowongan():
             break
 
 def review_lamaran():
-    kolom = ["nama_lengkap", "tanggal_lahir", "jenis_kelamin", "alamat", "email", "pengalaman", "pendidikan_terakhir"]
+    kolom = ["nama_lengkap", "tanggal_lahir", "jenis_kelamin", "alamat", "email", "pengalaman", "riwayat_pendidikan"]
     while True:
         data = lihat_semua_lamaran()
         if not data:

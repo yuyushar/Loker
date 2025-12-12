@@ -29,7 +29,7 @@ def lihat_semua_lamaran() -> List[Dict]:
             p.alamat,
             p.email,
             p.pengalaman,
-            p.pendidikan_terakhir,
+            p.riwayat_pendidikan,
             lo.judul_lowongan,
             lo.nama_perusahaan,
             l.tanggal_lamaran,
