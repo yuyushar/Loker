@@ -32,9 +32,9 @@ si_lowker/
 │   └── si_lowker.db  
 ├── features/  
 │   ├── admin.py  
-│   └── pelamar.py
-├── utils
-│   └── utils.py
+│   └── pelamar.py  
+├── utils  
+│   └── utils.py  
 └── README.md  
 
 ---
