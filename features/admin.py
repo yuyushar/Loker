@@ -99,11 +99,11 @@ def tambah_lowongan():
     valid_jenis = ["Freelance", "Part Time", "Fulltime"]
     while True:
         # Menampilkan opsi di dalam prompt input (di samping)
-        jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Fulltime)").title().strip()
+        jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").title().strip()
         if jenis_input in valid_jenis:
             jenis = jenis_input
             break
-        print("Jenis tidak valid! Pilihan hanya 'Freelance', 'Part Time', atau 'Fulltime'.")
+        print("Jenis tidak valid! Pilihan hanya 'Freelance', 'Part Time', atau 'Full Time'.")
 
     model_kerja = ""
     valid_model = ["Online", "Offline", "Hybrid"]
@@ -240,14 +240,14 @@ def edit_lowongan():
         pengalaman = print_input_prompt("Pengalaman").strip()
 
         jenis = None
-        valid_jenis = ["Freelance", "Part Time", "Fulltime"]
+        valid_jenis = ["Freelance", "Part Time", "Full Time"]
         while True:
-            jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Fulltime)").title().strip()
+            jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").title().strip()
             if not jenis_input: break 
             if jenis_input in valid_jenis:
                 jenis = jenis_input
                 break
-            print("Jenis tidak valid! Pilihan: Freelance, Part Time, Fulltime.")
+            print("Jenis tidak valid! Pilihan: Freelance, Part Time, Full Time.")
 
         model_kerja = None
         valid_model = ["Online", "Offline", "Hybrid"]
