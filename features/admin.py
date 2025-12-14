@@ -96,19 +96,25 @@ def tambah_lowongan():
     pengalaman = print_input_prompt("Pengalaman").strip()
 
     jenis = ""
-    valid_jenis = ["Freelance", "Part Time", "Fulltime"]
+
+    jenis_mapping = {
+        'FREELANCE': 'Freelance',
+        'FULLTIME': 'Full Time',
+        'PARTTIME': 'Part Time'
+    }
+    
     while True:
-        # Menampilkan opsi di dalam prompt input (di samping)
-        jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").title().strip()
-        if jenis_input in valid_jenis:
-            jenis = jenis_input
+        raw_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").upper().strip()
+        clean_input = raw_input.replace(" ", "").replace("-", "")
+        
+        if clean_input in jenis_mapping:
+            jenis = jenis_mapping[clean_input]
             break
-        print("Jenis tidak valid! Pilihan hanya 'Freelance', 'Part Time', atau 'Full Time'.")
+        print("Jenis tidak valid! Pilihan: 'Freelance', 'Part Time', atau 'Full Time'.")
 
     model_kerja = ""
     valid_model = ["Online", "Offline", "Hybrid"]
     while True:
-        # Menampilkan opsi di dalam prompt input (di samping)
         model_input = print_input_prompt("Model (Online/Offline/Hybrid)").capitalize().strip()
         if model_input in valid_model:
             model_kerja = model_input
@@ -130,6 +136,7 @@ def tambah_lowongan():
             print("Format tanggal salah!")
 
     lokasi = print_input_prompt("Lokasi").strip()
+    
     mapping_pendidikan = {
         'TIDAKADA': 'Tidak Ada', 'SD': 'SD', 'SMP': 'SMP', 'SMA': 'SMA/SMK', 'SMK': 'SMA/SMK',
         'D1': 'D1', 'D2': 'D2', 'D3': 'D3', 'D4': 'D4/S1', 'S1': 'D4/S1', 'S2': 'S2', 'S3': 'S3'
@@ -193,6 +200,12 @@ def edit_lowongan():
     }
     gender_mapping = {'L': 'L', 'LAKI-LAKI': 'L', 'P': 'P', 'PEREMPUAN': 'P', 'B': 'Bebas', 'BEBAS': 'Bebas'}
 
+    jenis_mapping = {
+        'FREELANCE': 'Freelance',
+        'FULLTIME': 'Full Time',
+        'PARTTIME': 'Part Time'
+    }
+
     while True:
         print_header("EDIT LOWONGAN")
         data = get_all_lowongan()
@@ -240,12 +253,16 @@ def edit_lowongan():
         pengalaman = print_input_prompt("Pengalaman").strip()
 
         jenis = None
-        valid_jenis = ["Freelance", "Part Time", "Full Time"]
         while True:
-            jenis_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").title().strip()
-            if not jenis_input: break 
-            if jenis_input in valid_jenis:
-                jenis = jenis_input
+            raw_input = print_input_prompt("Jenis (Freelance/Part Time/Full Time)").upper().strip()
+
+            if not raw_input: 
+                break 
+
+            clean_input = raw_input.replace(" ", "").replace("-", "")
+            
+            if clean_input in jenis_mapping:
+                jenis = jenis_mapping[clean_input]
                 break
             print("Jenis tidak valid! Pilihan: Freelance, Part Time, Full Time.")
 
